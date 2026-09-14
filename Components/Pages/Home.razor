@@ -1,0 +1,9 @@
+@page "/"
+@inject VeiculoDAO VeiculoDAO
+
+<PageTitle>DriveX</PageTitle>
+<div class="welcome-row"><div><p class="section-label">PAINEL PRINCIPAL</p><h1>Bem-vindo ao DriveX</h1><p class="text-secondary">Gerencie a frota da sua empresa.</p></div><a class="btn btn-primary" href="veiculos"><i class="bi bi-car-front me-1"></i> Ver veículos</a></div>
+@if (!string.IsNullOrEmpty(mensagemErro)) { <div class="alert alert-warning mt-4"><strong>Banco não configurado.</strong> @mensagemErro</div> }
+<div class="row g-4 mt-1"><div class="col-md-4"><div class="dashboard-card card-total"><i class="bi bi-car-front-fill"></i><p>Total de veículos</p><h2>@veiculos.Count</h2><small>Veículos cadastrados</small></div></div><div class="col-md-4"><div class="dashboard-card card-available"><i class="bi bi-check-circle-fill"></i><p>Disponíveis</p><h2>@veiculos.Count(v => v.Status == "Disponível")</h2><small>Prontos para uso</small></div></div><div class="col-md-4"><div class="dashboard-card card-maintenance"><i class="bi bi-tools"></i><p>Em manutenção</p><h2>@veiculos.Count(v => v.Status == "Manutenção")</h2><small>Precisam de atenção</small></div></div></div>
+<div class="card mt-4 shadow-sm border-0"><div class="card-body p-4"><h2 class="h5">Veículos recentes</h2>@if (veiculos.Any()){<div class="table-responsive"><table class="table mb-0"><thead><tr><th>VEÍCULO</th><th>PLACA</th><th>STATUS</th></tr></thead><tbody>@foreach(var v in veiculos.Take(5)){<tr><td>@v.Marca @v.Modelo</td><td>@v.Placa</td><td><span class="status-badge">@v.Status</span></td></tr>}</tbody></table></div>}else{<p class="text-secondary mb-0">Nenhum veículo encontrado.</p>}</div></div>
+@code { private List<Veiculo> veiculos = []; private string? mensagemErro; protected override void OnInitialized(){ try { veiculos = VeiculoDAO.Listar(); } catch { mensagemErro = "Confira a conexão MySQL no appsettings.json."; } } }

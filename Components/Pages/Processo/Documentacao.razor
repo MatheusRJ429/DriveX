@@ -1,0 +1,71 @@
+﻿@page "/documentacao"
+@inject DocumentacaoCliDAO DocumentacaoCliDAO
+@inject DocumentoCarDAO DocumentoCarDAO
+
+<PageTitle>Documentação | DriveX</PageTitle>
+
+<div class="welcome-row">
+    <div>
+        <p class="section-label">DOCUMENTOS</p>
+        <h1>Documentação dos clientes</h1>
+        <p class="text-secondary">Acompanhe os documentos necessários para cada venda.</p>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(mensagemErro))
+{
+    <div class="alert alert-warning mt-4">@mensagemErro</div>
+}
+
+<div class="card mt-4 shadow-sm border-0">
+    <div class="card-body p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>CLIENTE</th>
+                        <th>DOCUMENTO</th>
+                        <th>CONFERIDO</th>
+                        <th>DATA DE CONFERÊNCIA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var documento in documentacoes)
+                    {
+                        <tr>
+                            <td>Cliente #@documento.IdCliente</td>
+                            <td>@NomeDocumento(documento.IdDocumento)</td>
+                            <td><span class="status-badge">@documento.Conferido</span></td>
+                            <td>@(documento.DataConferencia?.ToString("dd/MM/yyyy HH:mm") ?? "Pendente")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<DocumentacaoCli> documentacoes = [];
+    private List<DocumentoCar> documentos = [];
+    private string? mensagemErro;
+
+    private string NomeDocumento(int idDocumento)
+    {
+        return documentos.FirstOrDefault(d => d.Id == idDocumento)?.NomeDocumento
+            ?? $"Documento #{idDocumento}";
+    }
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            documentacoes = DocumentacaoCliDAO.Listar();
+            documentos = DocumentoCarDAO.Listar();
+        }
+        catch
+        {
+            mensagemErro = "Não foi possível carregar a documentação.";
+        }
+    }
+}

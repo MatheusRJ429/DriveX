@@ -1,5 +1,64 @@
-﻿<h3>Suporte</h3>
+﻿@page "/chamados"
+@inject ChamadoSuporteDAO ChamadoSuporteDAO
+
+<PageTitle>Chamados | DriveX</PageTitle>
+
+<div class="welcome-row">
+    <div>
+        <p class="section-label">SUPORTE</p>
+        <h1>Chamados de suporte</h1>
+        <p class="text-secondary">Solicitações enviadas pelos clientes.</p>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(mensagemErro))
+{
+    <div class="alert alert-warning mt-4">@mensagemErro</div>
+}
+
+<div class="card mt-4 shadow-sm border-0">
+    <div class="card-body p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>CLIENTE</th>
+                        <th>TIPO</th>
+                        <th>MENSAGEM</th>
+                        <th>DATA</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var chamado in chamados)
+                    {
+                        <tr>
+                            <td>Cliente #@chamado.IdCliente</td>
+                            <td>@chamado.TipoSuporte</td>
+                            <td>@chamado.Mensagem</td>
+                            <td>@(chamado.DataChamado?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                            <td><span class="status-badge">@chamado.Status</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 @code {
+    private List<ChamadoSuporte> chamados = [];
+    private string? mensagemErro;
 
+    protected override void OnInitialized()
+    {
+        try
+        {
+            chamados = ChamadoSuporteDAO.Listar();
+        }
+        catch
+        {
+            mensagemErro = "Não foi possível carregar os chamados.";
+        }
+    }
 }

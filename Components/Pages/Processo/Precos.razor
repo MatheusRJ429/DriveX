@@ -1,5 +1,66 @@
-﻿<h3>Precos</h3>
+﻿@page "/precos"
+@inject PrecoDAO PrecoDAO
+
+<PageTitle>Preços | DriveX</PageTitle>
+
+<div class="welcome-row">
+    <div>
+        <p class="section-label">FINANCEIRO</p>
+        <h1>Preços e financiamento</h1>
+        <p class="text-secondary">Valores e condições disponíveis para os carros.</p>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(mensagemErro))
+{
+    <div class="alert alert-warning mt-4">@mensagemErro</div>
+}
+
+<div class="card mt-4 shadow-sm border-0">
+    <div class="card-body p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>CARRO</th>
+                        <th>PREÇO À VISTA</th>
+                        <th>ENTRADA</th>
+                        <th>PARCELAS</th>
+                        <th>IPVA ESTIMADO</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var preco in precos)
+                    {
+                        <tr>
+                            <td>Carro #@preco.IdCarro</td>
+                            <td>R$ @preco.PrecoVista.ToString("N2")</td>
+                            <td>R$ @preco.Entrada.ToString("N2")</td>
+                            <td>@preco.Parcelas</td>
+                            <td>R$ @preco.IpvaEstimado.ToString("N2")</td>
+                            <td><span class="status-badge">@preco.Status</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 @code {
+    private List<Preco> precos = [];
+    private string? mensagemErro;
 
+    protected override void OnInitialized()
+    {
+        try
+        {
+            precos = PrecoDAO.Listar();
+        }
+        catch
+        {
+            mensagemErro = "Não foi possível carregar os preços.";
+        }
+    }
 }

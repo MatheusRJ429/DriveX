@@ -1,6 +1,54 @@
-<div class="top-row ps-3 navbar navbar-dark"><div class="container-fluid"><a class="navbar-brand" href=""><i class="bi bi-car-front-fill"></i> DriveX</a></div></div>
-<div class="nav-scrollable"><nav class="nav flex-column">
-    <div class="nav-item px-3"><NavLink class="nav-link" href="" Match="NavLinkMatch.All"><i class="bi bi-house-door-fill"></i> Início</NavLink></div>
-    <div class="nav-item px-3"><NavLink class="nav-link" href="veiculos"><i class="bi bi-car-front-fill"></i> Veículos</NavLink></div>
-    <div class="nav-item px-3"><NavLink class="nav-link" href="veiculos"><i class="bi bi-tools"></i> Manutenções</NavLink></div>
-</nav></div>
+@* Components/Layout/NavMenu.razor *@
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">
+            <i class="bi bi-car-front-fill"></i> DriveX
+        </a>
+    </div>
+</div>
+
+<div class="nav-scrollable">
+    <nav class="nav flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <i class="bi bi-house-door-fill"></i> Início
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="veiculos">
+                <i class="bi bi-car-front-fill"></i> Veículos
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="clientes">
+                <i class="bi bi-people-fill"></i> Clientes
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="precos">
+                <i class="bi bi-cash-stack"></i> Preços
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="documentacao">
+                <i class="bi bi-file-earmark-check-fill"></i> Documentação
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="chamados">
+                <i class="bi bi-headset"></i> Chamados
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="vendas">
+                <i class="bi bi-receipt-cutoff"></i> Vendas
+            </NavLink>
+        </div>
+    </nav>
+</div>

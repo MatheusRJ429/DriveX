@@ -1,5 +1,3 @@
-namespace DriveX.Model;
-
 public class Veiculo
 {
     public int Id { get; set; }
@@ -9,4 +7,5 @@ public class Veiculo
     public int Ano { get; set; }
     public string Categoria { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
+    public decimal Preco { get; set; }
 }

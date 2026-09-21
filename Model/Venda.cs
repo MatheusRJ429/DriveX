@@ -1,6 +1,12 @@
-﻿namespace DriveX.Model
+﻿namespace DriveX.Model;
+
+public class Venda
 {
-    public class Venda
-    {
-    }
+    public int Id { get; set; }
+    public int IdCliente { get; set; }
+    public int IdCarro { get; set; }
+    public DateOnly DataVenda { get; set; }
+    public decimal ValorVenda { get; set; }
+    public string FormaPagamento { get; set; } = string.Empty;
+    public string StatusVenda { get; set; } = string.Empty;
 }

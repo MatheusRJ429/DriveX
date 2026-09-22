@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>ba40d8ce-617c-460f-9d4c-2cf9c7959cbc</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="26.7.0" />

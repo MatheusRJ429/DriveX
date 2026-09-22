@@ -14,54 +14,45 @@ public class VeiculoDAO
 
     public List<Veiculo> Listar()
     {
-        try
+        var lista = new List<Veiculo>();
+
+        using var con = _conexao.GetConnection();
+        using var comando = con.CreateCommand();
+
+        comando.CommandText = @"
+            SELECT
+                id_carro,
+                marca,
+                modelo,
+                placa,
+                ano,
+                categoria,
+                CASE
+                    WHEN status = 'disponivel' THEN 'Disponível'
+                    WHEN status = 'vendido' THEN 'Vendido'
+                    WHEN status = 'manutencao' THEN 'Manutenção'
+                    ELSE status
+                END AS status_exibicao
+            FROM Carros
+            ORDER BY id_carro DESC;
+        ";
+
+        using var leitor = comando.ExecuteReader();
+
+        while (leitor.Read())
         {
-            var lista = new List<Veiculo>();
-
-            using var con = _conexao.GetConnection();
-
-            string sql = @"
-                SELECT
-                    id_carro AS id_vei,
-                    modelo AS modelo_vei,
-                    marca AS marca_vei,
-                    'Não informada' AS placa_vei,
-                    ano AS ano_vei,
-                    'Automóvel' AS categoria_vei,
-                    CASE
-                        WHEN status = 'disponivel' THEN 'Disponível'
-                        WHEN status = 'vendido' THEN 'Vendido'
-                        ELSE status
-                    END AS status_vei
-                FROM Carros;
-            ";
-
-            using var comando = con.CreateCommand();
-            comando.CommandText = sql;
-
-            using var leitor = comando.ExecuteReader();
-
-            while (leitor.Read())
+            lista.Add(new Veiculo
             {
-                var veiculo = new Veiculo
-                {
-                    Id = Convert.ToInt32(leitor["id_vei"]),
-                    Modelo = leitor.GetString("modelo_vei"),
-                    Marca = leitor.GetString("marca_vei"),
-                    Placa = leitor.GetString("placa_vei"),
-                    Ano = Convert.ToInt32(leitor["ano_vei"]),
-                    Categoria = leitor.GetString("categoria_vei"),
-                    Status = leitor.GetString("status_vei")
-                };
-
-                lista.Add(veiculo);
-            }
-
-            return lista;
+                Id = Convert.ToInt32(leitor["id_carro"]),
+                Marca = leitor["marca"].ToString() ?? "",
+                Modelo = leitor["modelo"].ToString() ?? "",
+                Placa = leitor["placa"].ToString() ?? "",
+                Ano = Convert.ToInt32(leitor["ano"]),
+                Categoria = leitor["categoria"].ToString() ?? "",
+                Status = leitor["status_exibicao"].ToString() ?? ""
+            });
         }
-        catch
-        {
-            throw;
-        }
+
+        return lista;
     }
 }

@@ -1,5 +1,76 @@
-﻿<h3>Cliente</h3>
+﻿@page "/clientes"
+@using DriveX.DAO
+@using ClienteModel = DriveX.Model.Cliente
+@inject ClienteDAO ClienteDAO
+
+<PageTitle>Clientes | DriveX</PageTitle>
+
+<div class="welcome-row">
+    <div>
+        <p class="section-label">CADASTRO E ATENDIMENTO</p>
+        <h1>Clientes</h1>
+        <p class="text-secondary">Clientes interessados nos veículos da loja.</p>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(mensagemErro))
+{
+    <div class="alert alert-warning mt-4">@mensagemErro</div>
+}
+
+<div class="card mt-4 shadow-sm border-0">
+    <div class="card-body p-4">
+        <input class="form-control mb-4" @bind="busca" placeholder="Buscar por nome, CPF ou modelo de interesse..." />
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>CLIENTE</th>
+                        <th>TELEFONE</th>
+                        <th>MODELO DE INTERESSE</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cliente in ClientesFiltrados)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@cliente.Nome</strong>
+                                <br />
+                                <small class="text-secondary">@cliente.Email</small>
+                            </td>
+                            <td>@cliente.Telefone</td>
+                            <td>@cliente.ModeloInteresse</td>
+                            <td><span class="status-badge">@cliente.StatusAtendimento</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 @code {
+    private List<ClienteModel> clientes = [];
+    private string busca = "";
+    private string? mensagemErro;
 
+    private IEnumerable<ClienteModel> ClientesFiltrados =>
+        clientes.Where(c =>
+            $"{c.Nome} {c.Cpf} {c.ModeloInteresse}"
+            .Contains(busca, StringComparison.OrdinalIgnoreCase));
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            clientes = ClienteDAO.Listar();
+        }
+        catch
+        {
+            mensagemErro = "Não foi possível carregar os clientes.";
+        }
+    }
 }

@@ -1,12 +1,12 @@
-﻿namespace DriveX.Model
+﻿namespace DriveX.Model;
+
+public class ChamadoSuporte
 {
-    public class ChamadoSuporte
-    {
-        public int Id { get; set; }
-        public int IdCliente { get; set; }
-        public string TipoSuporte { get; set; } = string.Empty;
-        public string Mensagem { get; set; } = string.Empty;
-        public DateTime? DataChamado { get; set; }
-        public string Status { get; set; } = string.Empty;
-    }
+    public int Id { get; set; }
+    public int IdCliente { get; set; }
+    public string NomeCliente { get; set; } = string.Empty;
+    public string TipoSuporte { get; set; } = string.Empty;
+    public string Mensagem { get; set; } = string.Empty;
+    public DateTime? DataChamado { get; set; }
+    public string Status { get; set; } = string.Empty;
 }

@@ -35,7 +35,7 @@
                     @foreach (var preco in precos)
                     {
                         <tr>
-                            <td>Carro #@preco.IdCarro</td>
+                            <td>@preco.NomeCarro</td>
                             <td>R$ @preco.PrecoVista.ToString("N2")</td>
                             <td>R$ @preco.Entrada.ToString("N2")</td>
                             <td>@preco.Parcelas</td>

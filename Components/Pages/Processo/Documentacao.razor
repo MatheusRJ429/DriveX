@@ -33,8 +33,8 @@
                     @foreach (var documento in documentacoes)
                     {
                         <tr>
-                            <td>Cliente #@documento.IdCliente</td>
-                            <td>@NomeDocumento(documento.IdDocumento)</td>
+                            <td>@documento.NomeCliente</td>
+                            <td>@documento.NomeDocumento</td>
                             <td><span class="status-badge">@documento.Conferido</span></td>
                             <td>@(documento.DataConferencia?.ToString("dd/MM/yyyy HH:mm") ?? "Pendente")</td>
                         </tr>

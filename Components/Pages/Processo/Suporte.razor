@@ -33,7 +33,7 @@
                     @foreach (var chamado in chamados)
                     {
                         <tr>
-                            <td>Cliente #@chamado.IdCliente</td>
+                            <td>@chamado.NomeCliente</td>
                             <td>@chamado.TipoSuporte</td>
                             <td>@chamado.Mensagem</td>
                             <td>@(chamado.DataChamado?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>

@@ -36,8 +36,8 @@
                     {
                         <tr>
                             <td>#@venda.Id</td>
-                            <td>Cliente #@venda.IdCliente</td>
-                            <td>Carro #@venda.IdCarro</td>
+                            <td>@venda.NomeCliente</td>
+                            <td>@venda.NomeCarro</td>
                             <td>@venda.DataVenda.ToString("dd/MM/yyyy")</td>
                             <td>R$ @venda.ValorVenda.ToString("N2")</td>
                             <td>@venda.FormaPagamento</td>

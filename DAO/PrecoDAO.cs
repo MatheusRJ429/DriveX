@@ -31,7 +31,8 @@ public class PrecoDAO
                 p.ipva_estimado,
                 p.status
             FROM Precos p
-            INNER JOIN Carros c ON c.id_carro = p.id_carro_fk
+            INNER JOIN Carros c
+                ON c.id_carro = p.id_carro_fk
             ORDER BY p.id_preco DESC;
         ";
 
@@ -44,7 +45,9 @@ public class PrecoDAO
                 Id = Convert.ToInt32(leitor["id_preco"]),
                 IdCarro = Convert.ToInt32(leitor["id_carro_fk"]),
                 NomeCarro = leitor["nome_carro"].ToString() ?? "",
-                DataPreco = DateOnly.FromDateTime(Convert.ToDateTime(leitor["data_preco"])),
+                DataPreco = DateOnly.FromDateTime(
+                    Convert.ToDateTime(leitor["data_preco"])
+                ),
                 Entrada = Convert.ToDecimal(leitor["entrada"]),
                 Parcelas = leitor["parcelas"].ToString() ?? "",
                 PrecoVista = Convert.ToDecimal(leitor["preco_vista"]),

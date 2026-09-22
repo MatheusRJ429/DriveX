@@ -5,3 +5,25 @@ a, .btn-link { color: #006bb7; }
 .content { padding-top: 1.1rem; }.valid.modified:not([type=checkbox]) { outline: 1px solid #26b050; }.invalid,.validation-message { outline: 1px solid #e50000; color:#e50000; }.darker-border-checkbox.form-check-input { border-color:#929292; }
 .blazor-error-boundary { background:#b32121; padding:1rem; color:white; }.blazor-error-boundary::after { content:"An error has occurred."; }
 .page { min-height:100vh; display:flex; background:#f5f7fb; }.sidebar { width:250px; min-height:100vh; background:linear-gradient(180deg,#10233f,#183b67); }.page main { flex:1; min-width:0; }.top-row { min-height:58px; background:white; display:flex; align-items:center; justify-content:space-between; box-shadow:0 1px 5px #00000012; color:#65758b; }.navbar-brand { color:white!important; font-size:1.5rem; font-weight:700; padding:1.3rem 0; }.nav-scrollable { padding-top:1rem; }.nav-item { margin-bottom:.3rem; }.nav-item .nav-link { color:#d8e5f4; border-radius:6px; padding:.72rem 1rem; }.nav-item .nav-link.active,.nav-item .nav-link:hover { color:white; background:#ffffff24; }.nav-item i { display:inline-block; width:1.6rem; }.welcome-row { display:flex; align-items:end; justify-content:space-between; gap:1rem; padding-top:1rem; }.section-label { color:#1b6ec2; letter-spacing:.1em; font-size:.72rem; font-weight:700; margin-bottom:.25rem; }.welcome-row h1 { font-size:1.8rem; font-weight:700; }.dashboard-card { position:relative; min-height:150px; padding:1.35rem; border-radius:12px; color:white; box-shadow:0 6px 18px #0f172a1c; }.dashboard-card>i { position:absolute; right:1.2rem; top:1.2rem; font-size:2.3rem; opacity:.35; }.dashboard-card h2 { font-size:2.3rem; font-weight:700; margin:0; }.dashboard-card p { margin-bottom:.2rem; }.card-total{background:#1b6ec2}.card-available{background:#218665}.card-maintenance{background:#c78317}.status-badge { padding:.25rem .55rem; border-radius:999px; background:#e2f7ef; color:#176b55; font-size:.75rem; font-weight:700; }#blazor-error-ui{display:none;position:fixed;bottom:0;width:100%;padding:.75rem;background:#fff3cd;z-index:1000}.dismiss{float:right;cursor:pointer}@media(max-width:640px){.sidebar{width:68px}.navbar-brand{font-size:0}.navbar-brand i{font-size:1.4rem}.nav-item .nav-link{font-size:0;text-align:center}.nav-item i{font-size:1.15rem}.content{padding-left:1rem!important;padding-right:1rem!important}.welcome-row{align-items:start;flex-direction:column}}
+
+.sidebar {
+    overflow: hidden;
+}
+
+.logo-area {
+    width: 100%;
+    height: 145px;
+    overflow: hidden;
+    background: #020711;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.logo-drivex {
+    width: 100% !important;
+    height: 145px !important;
+    display: block;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    object-fit: cover;
+    object-position: center 62%;
+}

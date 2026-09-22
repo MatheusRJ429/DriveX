@@ -1,4 +1,5 @@
-﻿namespace DriveX.Model;
+﻿// Model/Venda.cs
+namespace DriveX.Model;
 
 public class Venda
 {

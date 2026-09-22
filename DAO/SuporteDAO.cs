@@ -22,13 +22,15 @@ public class ChamadoSuporteDAO
         comando.CommandText = @"
             SELECT
                 ch.id_chamado,
+                ch.id_cliente_fk,
                 cli.nome AS nome_cliente,
                 ch.tipo_suporte,
                 ch.mensagem,
                 ch.data_chamado,
                 ch.status
             FROM Chamados_Suporte ch
-            INNER JOIN Clientes cli ON cli.id_cliente = ch.id_cliente_fk
+            INNER JOIN Clientes cli
+                ON cli.id_cliente = ch.id_cliente_fk
             ORDER BY ch.data_chamado DESC;
         ";
 
@@ -39,6 +41,7 @@ public class ChamadoSuporteDAO
             lista.Add(new ChamadoSuporte
             {
                 Id = Convert.ToInt32(leitor["id_chamado"]),
+                IdCliente = Convert.ToInt32(leitor["id_cliente_fk"]),
                 NomeCliente = leitor["nome_cliente"].ToString() ?? "",
                 TipoSuporte = leitor["tipo_suporte"].ToString() ?? "",
                 Mensagem = leitor["mensagem"].ToString() ?? "",

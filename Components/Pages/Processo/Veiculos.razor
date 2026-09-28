@@ -1,8 +1,219 @@
 @page "/veiculos"
+
+@* Importa o model Veiculo. *@
+@using DriveX.Model
+
+@* Permite usar o VeiculoDAO para buscar e cadastrar veículos. *@
+@using DriveX.DAO
+
+@* Injeta o DAO nesta página. *@
 @inject VeiculoDAO VeiculoDAO
 
-<PageTitle>Veículos | DriveX</PageTitle>
-<div class="welcome-row"><div><p class="section-label">CADASTRO E CONTROLE</p><h1>Veículos</h1><p class="text-secondary">Consulte os automóveis cadastrados na frota.</p></div><button class="btn btn-primary" disabled><i class="bi bi-plus-lg me-1"></i> Novo veículo</button></div>
-@if (!string.IsNullOrEmpty(mensagemErro)) { <div class="alert alert-warning mt-4">@mensagemErro</div> }
-<div class="card mt-4 shadow-sm border-0"><div class="card-body p-4"><div class="row g-3 mb-4"><div class="col-md-8"><input class="form-control" @bind="busca" placeholder="Buscar por modelo, marca ou placa..." /></div><div class="col-md-4"><select class="form-select" @bind="filtro"><option>Todos</option><option>Disponível</option><option>Em uso</option><option>Manutenção</option></select></div></div><div class="table-responsive"><table class="table table-hover align-middle"><thead><tr><th>VEÍCULO</th><th>PLACA</th><th>CATEGORIA</th><th>ANO</th><th>STATUS</th></tr></thead><tbody>@foreach(var v in filtrados){<tr><td><i class="bi bi-car-front text-primary me-2"></i><strong>@v.Marca @v.Modelo</strong></td><td>@v.Placa</td><td>@v.Categoria</td><td>@v.Ano</td><td><span class="status-badge">@v.Status</span></td></tr>}</tbody></table></div></div></div>
-@code { private List<Veiculo> veiculos = []; private string busca = ""; private string filtro = "Todos"; private string? mensagemErro; private IEnumerable<Veiculo> filtrados => veiculos.Where(v => (filtro == "Todos" || v.Status == filtro) && ($"{v.Marca} {v.Modelo} {v.Placa}".Contains(busca, StringComparison.OrdinalIgnoreCase))); protected override void OnInitialized(){try { veiculos = VeiculoDAO.Listar(); } catch { mensagemErro = "Confira a conexão com o banco e a tabela veiculos."; }} }
+<PageTitle>Veículos - DriveX</PageTitle>
+
+<div class="page-title">
+    <span class="eyebrow">CADASTRO E CONTROLE</span>
+    <h1>Veículos</h1>
+    <p>Consulte e cadastre os automóveis da frota.</p>
+</div>
+
+@* Botão que abre ou fecha o formulário. *@
+<button class="btn btn-primary mb-3" @onclick="AbrirFormulario">
+    <i class="bi bi-plus-lg"></i>
+    Novo veículo
+</button>
+
+@* O formulário só aparece quando mostrarFormulario for verdadeiro. *@
+@if (mostrarFormulario)
+{
+    <div class="card p-4 mb-4 shadow-sm">
+        <h4 class="mb-3">Cadastrar novo veículo</h4>
+
+        @* Quando enviar o formulário, chama o método SalvarVeiculo. *@
+        <form @onsubmit="SalvarVeiculo" @onsubmit:preventDefault>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label>Marca</label>
+                    <input class="form-control" @bind="novoVeiculo.Marca" required />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Modelo</label>
+                    <input class="form-control" @bind="novoVeiculo.Modelo" required />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Placa</label>
+                    <input class="form-control" @bind="novoVeiculo.Placa" required />
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label>Ano</label>
+                    <input type="number" class="form-control" @bind="novoVeiculo.Ano" required />
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label>Categoria</label>
+                    <input class="form-control" @bind="novoVeiculo.Categoria" placeholder="SUV, Sedan..." required />
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label>Cor</label>
+                    <input class="form-control" @bind="novoVeiculo.Cor" required />
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label>Quilometragem</label>
+                    <input type="number" class="form-control" @bind="novoVeiculo.Quilometragem" required />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Preço à vista</label>
+                    <input type="number" step="0.01" class="form-control" @bind="novoVeiculo.PrecoVista" required />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Entrada</label>
+                    <input type="number" step="0.01" class="form-control" @bind="novoVeiculo.Entrada" required />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Parcelas</label>
+                    <input class="form-control" @bind="novoVeiculo.Parcelas" placeholder="48x R$ 1.000,00" required />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Status</label>
+
+                    <select class="form-select" @bind="novoVeiculo.Status">
+                        <option value="disponivel">Disponível</option>
+                        <option value="manutencao">Manutenção</option>
+                        <option value="vendido">Vendido</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn btn-success" type="submit">
+                <i class="bi bi-check-lg"></i>
+                Salvar veículo
+            </button>
+
+            <button class="btn btn-secondary ms-2" type="button" @onclick="FecharFormulario">
+                Cancelar
+            </button>
+        </form>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(mensagem))
+{
+    <div class="alert alert-success">
+        @mensagem
+    </div>
+}
+
+<div class="card p-4 shadow-sm">
+    <input class="form-control mb-3"
+           placeholder="Buscar por marca, modelo ou placa..."
+           @bind="busca" />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>VEÍCULO</th>
+                <th>PLACA</th>
+                <th>CATEGORIA</th>
+                <th>ANO</th>
+                <th>STATUS</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var veiculo in VeiculosFiltrados)
+            {
+                <tr>
+                    <td>@veiculo.NomeCompleto</td>
+                    <td>@veiculo.Placa</td>
+                    <td>@veiculo.Categoria</td>
+                    <td>@veiculo.Ano</td>
+                    <td>
+                        <span class="status-badge">@veiculo.Status</span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    // Lista com os veículos buscados do banco.
+    private List<Veiculo> veiculos = new();
+
+    // Objeto usado pelo formulário de cadastro.
+    private Veiculo novoVeiculo = new()
+    {
+        Status = "disponivel"
+    };
+
+    // Controla se o formulário aparece ou não.
+    private bool mostrarFormulario = false;
+
+    // Guarda a mensagem de sucesso.
+    private string mensagem = string.Empty;
+
+    // Texto digitado na busca.
+    private string busca = string.Empty;
+
+    // Executa assim que a página é aberta.
+    protected override void OnInitialized()
+    {
+        CarregarVeiculos();
+    }
+
+    // Busca os veículos no banco.
+    private void CarregarVeiculos()
+    {
+        veiculos = VeiculoDAO.Listar();
+    }
+
+    // Abre o formulário.
+    private void AbrirFormulario()
+    {
+        mensagem = string.Empty;
+        mostrarFormulario = true;
+    }
+
+    // Fecha o formulário e limpa os campos.
+    private void FecharFormulario()
+    {
+        mostrarFormulario = false;
+
+        novoVeiculo = new Veiculo
+        {
+            Status = "disponivel"
+        };
+    }
+
+    // Salva o novo veículo no banco.
+    private void SalvarVeiculo()
+    {
+        // Manda o objeto preenchido para o DAO.
+        VeiculoDAO.Adicionar(novoVeiculo);
+
+        // Atualiza a tabela sem precisar fechar o site.
+        CarregarVeiculos();
+
+        // Exibe mensagem ao usuário.
+        mensagem = "Veículo cadastrado com sucesso.";
+
+        // Fecha e limpa o formulário.
+        FecharFormulario();
+    }
+
+    // Filtra a lista conforme a busca digitada.
+    private IEnumerable<Veiculo> VeiculosFiltrados =>
+        veiculos.Where(v =>
+            v.Marca.Contains(busca, StringComparison.OrdinalIgnoreCase) ||
+            v.Modelo.Contains(busca, StringComparison.OrdinalIgnoreCase) ||
+            v.Placa.Contains(busca, StringComparison.OrdinalIgnoreCase));
+}

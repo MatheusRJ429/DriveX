@@ -2,6 +2,7 @@ using DriveX.Components;
 using DriveX.Configs;
 using DriveX.DAO;
 
+//Ativa o Blazor/Razor. Isso permite que as páginas .razor apareçam e que recursos como busca, filtro e botões funcionem sem recarregar toda a página.
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddScoped<Conexao>();

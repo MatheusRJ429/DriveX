@@ -1,76 +1,200 @@
 ﻿@page "/clientes"
+
 @using DriveX.DAO
 @using ClienteModel = DriveX.Model.Cliente
+
 @inject ClienteDAO ClienteDAO
 
-<PageTitle>Clientes | DriveX</PageTitle>
+<PageTitle>Clientes - DriveX</PageTitle>
 
-<div class="welcome-row">
-    <div>
-        <p class="section-label">CADASTRO E ATENDIMENTO</p>
-        <h1>Clientes</h1>
-        <p class="text-secondary">Clientes interessados nos veículos da loja.</p>
-    </div>
+<div class="page-title">
+    <span class="eyebrow">RELACIONAMENTO</span>
+    <h1>Clientes</h1>
+    <p>Cadastre e acompanhe os clientes da concessionária.</p>
 </div>
 
-@if (!string.IsNullOrEmpty(mensagemErro))
+<button class="btn btn-primary mb-3" @onclick="AbrirFormulario">
+    <i class="bi bi-person-plus-fill"></i>
+    Novo cliente
+</button>
+
+@if (mostrarFormulario)
 {
-    <div class="alert alert-warning mt-4">@mensagemErro</div>
+    <div class="card p-4 mb-4 shadow-sm">
+        <h4 class="mb-3">Cadastrar novo cliente</h4>
+
+        <form @onsubmit="SalvarCliente" @onsubmit:preventDefault>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label>Nome completo</label>
+                    <input class="form-control" @bind="novoCliente.Nome" required />
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label>CPF</label>
+                    <input class="form-control" @bind="novoCliente.Cpf" required />
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label>Telefone</label>
+                    <input class="form-control" @bind="novoCliente.Telefone" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label>E-mail</label>
+                    <input type="email" class="form-control" @bind="novoCliente.Email" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label>Modelo de interesse</label>
+                    <input class="form-control"
+                           @bind="novoCliente.ModeloInteresse"
+                           placeholder="Exemplo: Jeep Compass" />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label>Status do atendimento</label>
+
+                    <select class="form-select" @bind="novoCliente.StatusAtendimento">
+                        <option value="novo">Novo</option>
+                        <option value="em atendimento">Em atendimento</option>
+                        <option value="concluido">Concluído</option>
+                    </select>
+                </div>
+
+                <div class="col-md-8 mb-3">
+                    <label>Observação</label>
+                    <input class="form-control"
+                           @bind="novoCliente.Observacao"
+                           placeholder="Informações adicionais do cliente" />
+                </div>
+            </div>
+
+            <button class="btn btn-success" type="submit">
+                <i class="bi bi-check-lg"></i>
+                Salvar cliente
+            </button>
+
+            <button class="btn btn-secondary ms-2" type="button" @onclick="FecharFormulario">
+                Cancelar
+            </button>
+        </form>
+    </div>
 }
 
-<div class="card mt-4 shadow-sm border-0">
-    <div class="card-body p-4">
-        <input class="form-control mb-4" @bind="busca" placeholder="Buscar por nome, CPF ou modelo de interesse..." />
-
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead>
-                    <tr>
-                        <th>CLIENTE</th>
-                        <th>TELEFONE</th>
-                        <th>MODELO DE INTERESSE</th>
-                        <th>STATUS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var cliente in ClientesFiltrados)
-                    {
-                        <tr>
-                            <td>
-                                <strong>@cliente.Nome</strong>
-                                <br />
-                                <small class="text-secondary">@cliente.Email</small>
-                            </td>
-                            <td>@cliente.Telefone</td>
-                            <td>@cliente.ModeloInteresse</td>
-                            <td><span class="status-badge">@cliente.StatusAtendimento</span></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+@if (!string.IsNullOrEmpty(mensagem))
+{
+    <div class="alert alert-success">
+        @mensagem
     </div>
+}
+
+<div class="card p-4 shadow-sm">
+    <input class="form-control mb-3"
+           placeholder="Buscar por nome, CPF ou e-mail..."
+           @bind="busca" />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>CLIENTE</th>
+                <th>TELEFONE</th>
+                <th>INTERESSE</th>
+                <th>STATUS</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var cliente in ClientesFiltrados)
+            {
+                <tr>
+                    <td>
+                        <strong>@cliente.Nome</strong>
+                        <br />
+                        <small class="text-secondary">@cliente.Email</small>
+                    </td>
+
+                    <td>@cliente.Telefone</td>
+                    <td>@cliente.ModeloInteresse</td>
+
+                    <td>
+                        <span class="status-badge">@cliente.StatusAtendimento</span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 
 @code {
-    private List<ClienteModel> clientes = [];
-    private string busca = "";
-    private string? mensagemErro;
+    // Lista buscada do banco.
+    private List<ClienteModel> clientes = new();
 
-    private IEnumerable<ClienteModel> ClientesFiltrados =>
-        clientes.Where(c =>
-            $"{c.Nome} {c.Cpf} {c.ModeloInteresse}"
-            .Contains(busca, StringComparison.OrdinalIgnoreCase));
+    // Objeto usado pelo formulário.
+    private ClienteModel novoCliente = new()
+    {
+        StatusAtendimento = "novo"
+    };
 
+    // Controla se o formulário aparece.
+    private bool mostrarFormulario = false;
+
+    // Mensagem verde após salvar.
+    private string mensagem = string.Empty;
+
+    // Texto usado na busca.
+    private string busca = string.Empty;
+
+    // Carrega os clientes assim que a página abre.
     protected override void OnInitialized()
     {
-        try
-        {
-            clientes = ClienteDAO.Listar();
-        }
-        catch
-        {
-            mensagemErro = "Não foi possível carregar os clientes.";
-        }
+        CarregarClientes();
     }
+
+    // Busca clientes no banco pelo ClienteDAO.
+    private void CarregarClientes()
+    {
+        clientes = ClienteDAO.Listar();
+    }
+
+    // Abre formulário.
+    private void AbrirFormulario()
+    {
+        mensagem = string.Empty;
+        mostrarFormulario = true;
+    }
+
+    // Fecha formulário e limpa os dados preenchidos.
+    private void FecharFormulario()
+    {
+        mostrarFormulario = false;
+
+        novoCliente = new ClienteModel
+        {
+            StatusAtendimento = "novo"
+        };
+    }
+
+    // Salva o novo cliente.
+    private void SalvarCliente()
+    {
+        // Insere no banco.
+        ClienteDAO.Adicionar(novoCliente);
+
+        // Atualiza tabela.
+        CarregarClientes();
+
+        // Mostra confirmação.
+        mensagem = "Cliente cadastrado com sucesso.";
+
+        // Fecha formulário.
+        FecharFormulario();
+    }
+
+    // Filtra clientes conforme o texto da busca.
+    private IEnumerable<ClienteModel> ClientesFiltrados =>
+        clientes.Where(c =>
+            c.Nome.Contains(busca, StringComparison.OrdinalIgnoreCase) ||
+            c.Cpf.Contains(busca, StringComparison.OrdinalIgnoreCase) ||
+            c.Email.Contains(busca, StringComparison.OrdinalIgnoreCase));
 }

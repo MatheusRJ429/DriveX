@@ -1,4 +1,8 @@
 ﻿@page "/documentacao"
+
+@using DriveX.DAO
+@using DriveX.Model
+
 @inject DocumentacaoCliDAO DocumentacaoCliDAO
 @inject DocumentoCarDAO DocumentoCarDAO
 
@@ -29,14 +33,19 @@
                         <th>DATA DE CONFERÊNCIA</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @foreach (var documento in documentacoes)
                     {
                         <tr>
                             <td>@documento.NomeCliente</td>
                             <td>@documento.NomeDocumento</td>
-                            <td><span class="status-badge">@documento.Conferido</span></td>
-                            <td>@(documento.DataConferencia?.ToString("dd/MM/yyyy HH:mm") ?? "Pendente")</td>
+                            <td>
+                                <span class="status-badge">@documento.Conferido</span>
+                            </td>
+                            <td>
+                                @(documento.DataConferencia?.ToString("dd/MM/yyyy HH:mm") ?? "Pendente")
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -46,25 +55,39 @@
 </div>
 
 @code {
+    // Lista que guarda os registros de documentação dos clientes.
     private List<DocumentacaoCli> documentacoes = [];
+
+    // Lista que guarda os tipos de documentos existentes no banco.
     private List<DocumentoCar> documentos = [];
+
+    // Guarda uma mensagem caso aconteça algum erro ao buscar dados.
     private string? mensagemErro;
 
+    // Procura o nome de um documento usando o seu ID.
     private string NomeDocumento(int idDocumento)
     {
+        // FirstOrDefault procura o primeiro documento com o mesmo ID.
+        // ?. impede erro caso o documento não seja encontrado.
+        // ?? mostra um texto padrão se não encontrar o documento.
         return documentos.FirstOrDefault(d => d.Id == idDocumento)?.NomeDocumento
             ?? $"Documento #{idDocumento}";
     }
 
+    // Este método roda automaticamente quando a página é aberta.
     protected override void OnInitialized()
     {
         try
         {
+            // Busca no banco todos os documentos ligados aos clientes.
             documentacoes = DocumentacaoCliDAO.Listar();
+
+            // Busca no banco os tipos de documentos cadastrados.
             documentos = DocumentoCarDAO.Listar();
         }
         catch
         {
+            // Se der algum erro no banco, salva uma mensagem para aparecer na tela.
             mensagemErro = "Não foi possível carregar a documentação.";
         }
     }

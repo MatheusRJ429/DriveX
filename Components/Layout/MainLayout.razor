@@ -1,10 +1,60 @@
 @inherits LayoutComponentBase
 
+<!-- // Define este arquivo como o layout principal do site.
+     // LayoutComponentBase permite usar o @Body. -->
+<!-- // Container principal que organiza toda a página. -->
 <div class="page">
-    <div class="sidebar"><NavMenu /></div>
+
+    <!-- // Menu lateral do sistema. -->
+    <div class="sidebar">
+
+        <!-- // Carrega o componente NavMenu. -->
+        <NavMenu />
+
+    </div>
+
+    <!-- // Área principal onde as páginas aparecem. -->
     <main>
-        <div class="top-row px-4"><span>Gerenciamento de automóveis</span><a href="https://learn.microsoft.com/aspnet/core/" target="_blank">Sobre</a></div>
-        <article class="content px-4">@Body</article>
+
+        <!-- // Barra superior.
+             // px-4 é uma classe Bootstrap que adiciona espaçamento lateral. -->
+        <div class="top-row px-4">
+
+            <!-- // Texto exibido no topo esquerdo. -->
+            <span>Gerenciamento de automóveis</span>
+
+            <!-- // Link da documentação do ASP.NET Core.
+                 // target="_blank" abre o link em uma nova aba. -->
+            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">
+                Sobre
+            </a>
+
+        </div>
+
+        <!-- // Área onde o conteúdo da página atual será exibido.
+             // Exemplo: ao abrir /veiculos, o conteúdo de Veiculos.razor
+             // será mostrado no lugar de @Body.
+             // content é uma classe CSS do projeto.
+             // px-4 adiciona espaçamento nas laterais. -->
+        <article class="content px-4">
+            @Body
+        </article>
+
     </main>
+
 </div>
-<div id="blazor-error-ui" data-nosnippet>Ocorreu um erro. <a href="." class="reload">Recarregar</a><span class="dismiss">🗙</span></div>
+
+<!-- // Área de erro padrão do Blazor.
+     // Normalmente fica escondida e aparece apenas se ocorrer algum erro. -->
+<div id="blazor-error-ui" data-nosnippet>
+
+    <!-- // Mensagem exibida em caso de erro. -->
+    Ocorreu um erro.
+
+    <!-- // Link para recarregar a página. -->
+    <a href="." class="reload">Recarregar</a>
+
+    <!-- // Botão/ícone usado para fechar a mensagem de erro. -->
+    <span class="dismiss">🗙</span>
+
+</div>

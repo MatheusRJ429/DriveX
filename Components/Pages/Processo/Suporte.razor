@@ -1,4 +1,8 @@
 ﻿@page "/chamados"
+
+@using DriveX.DAO
+@using DriveX.Model
+
 @inject ChamadoSuporteDAO ChamadoSuporteDAO
 
 <PageTitle>Chamados | DriveX</PageTitle>
@@ -29,6 +33,7 @@
                         <th>STATUS</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @foreach (var chamado in chamados)
                     {
@@ -37,7 +42,9 @@
                             <td>@chamado.TipoSuporte</td>
                             <td>@chamado.Mensagem</td>
                             <td>@(chamado.DataChamado?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
-                            <td><span class="status-badge">@chamado.Status</span></td>
+                            <td>
+                                <span class="status-badge">@chamado.Status</span>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -47,17 +54,25 @@
 </div>
 
 @code {
+    // Lista que guarda todos os chamados de suporte trazidos do banco.
     private List<ChamadoSuporte> chamados = [];
+
+    // Guarda a mensagem mostrada caso ocorra algum erro.
     private string? mensagemErro;
 
+    // Método executado automaticamente quando a página é aberta.
     protected override void OnInitialized()
     {
         try
         {
+            // Chama o método Listar do ChamadoSuporteDAO.
+            // Esse método faz uma consulta no banco e devolve os chamados.
             chamados = ChamadoSuporteDAO.Listar();
         }
         catch
         {
+            // Caso dê erro de conexão ou consulta no banco,
+            // esta mensagem aparecerá no alerta amarelo da página.
             mensagemErro = "Não foi possível carregar os chamados.";
         }
     }

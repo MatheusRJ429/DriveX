@@ -1,50 +1,87 @@
 ﻿@page "/clientes"
 
+<!-- // Define a rota da página.
+     // Ao acessar /clientes no navegador, esta página será exibida. -->
 @using DriveX.DAO
+<!-- // Permite usar a classe ClienteDAO, responsável pelas consultas no banco. -->
 @using ClienteModel = DriveX.Model.Cliente
-
+<!-- // Cria o apelido ClienteModel para a classe Cliente.
+     // Isso evita conflito com o nome deste arquivo: Cliente.razor. -->
 @inject ClienteDAO ClienteDAO
+<!-- // Cria uma instância do ClienteDAO para buscar e cadastrar clientes. -->
 
 <PageTitle>Clientes - DriveX</PageTitle>
-
+<!-- // Define o título que aparecerá na aba do navegador. -->
+<!-- // Cabeçalho principal da página. -->
 <div class="page-title">
+
+    <!-- // Texto menor acima do título. -->
     <span class="eyebrow">RELACIONAMENTO</span>
+
+    <!-- // Título principal da página. -->
     <h1>Clientes</h1>
+
+    <!-- // Descrição da função da página. -->
     <p>Cadastre e acompanhe os clientes da concessionária.</p>
 </div>
 
+<!-- // Botão que chama o método AbrirFormulario ao ser clicado.
+     // btn, btn-primary e mb-3 são classes do Bootstrap.
+     // mb-3 adiciona margem inferior. -->
 <button class="btn btn-primary mb-3" @onclick="AbrirFormulario">
+
+    <!-- // Ícone Bootstrap de adicionar pessoa. -->
     <i class="bi bi-person-plus-fill"></i>
+
     Novo cliente
 </button>
 
+<!-- // Só exibe o formulário se mostrarFormulario for verdadeiro. -->
 @if (mostrarFormulario)
 {
+    <!-- // Card Bootstrap usado para organizar o formulário. -->
     <div class="card p-4 mb-4 shadow-sm">
+
+        <!-- // Título do formulário. -->
         <h4 class="mb-3">Cadastrar novo cliente</h4>
 
+        <!-- // Formulário de cadastro.
+             // Quando ele for enviado, chama SalvarCliente.
+             // preventDefault impede que a página seja recarregada. -->
         <form @onsubmit="SalvarCliente" @onsubmit:preventDefault>
+
+            <!-- // row cria uma linha para organizar os campos do Bootstrap. -->
             <div class="row">
+
+                <!-- // Campo para o nome completo do cliente.
+                     // col-md-6 ocupa metade da largura em telas médias ou grandes.
+                     // @bind liga o campo à propriedade novoCliente.Nome. -->
                 <div class="col-md-6 mb-3">
                     <label>Nome completo</label>
                     <input class="form-control" @bind="novoCliente.Nome" required />
                 </div>
 
+                <!-- // Campo para o CPF do cliente. -->
                 <div class="col-md-3 mb-3">
                     <label>CPF</label>
                     <input class="form-control" @bind="novoCliente.Cpf" required />
                 </div>
 
+                <!-- // Campo para o telefone do cliente. -->
                 <div class="col-md-3 mb-3">
                     <label>Telefone</label>
                     <input class="form-control" @bind="novoCliente.Telefone" required />
                 </div>
 
+                <!-- // Campo para o e-mail.
+                     // type="email" faz o navegador verificar se parece um e-mail válido. -->
                 <div class="col-md-6 mb-3">
                     <label>E-mail</label>
                     <input type="email" class="form-control" @bind="novoCliente.Email" required />
                 </div>
 
+                <!-- // Campo para informar qual carro interessa ao cliente.
+                     // placeholder mostra um exemplo dentro do campo. -->
                 <div class="col-md-6 mb-3">
                     <label>Modelo de interesse</label>
                     <input class="form-control"
@@ -52,9 +89,11 @@
                            placeholder="Exemplo: Jeep Compass" />
                 </div>
 
+                <!-- // Campo de seleção do status atual do atendimento. -->
                 <div class="col-md-4 mb-3">
                     <label>Status do atendimento</label>
 
+                    <!-- // @bind salva a opção escolhida em novoCliente.StatusAtendimento. -->
                     <select class="form-select" @bind="novoCliente.StatusAtendimento">
                         <option value="novo">Novo</option>
                         <option value="em atendimento">Em atendimento</option>
@@ -62,6 +101,7 @@
                     </select>
                 </div>
 
+                <!-- // Campo para observações adicionais sobre o cliente. -->
                 <div class="col-md-8 mb-3">
                     <label>Observação</label>
                     <input class="form-control"
@@ -70,11 +110,14 @@
                 </div>
             </div>
 
+            <!-- // Botão que envia o formulário e chama SalvarCliente. -->
             <button class="btn btn-success" type="submit">
                 <i class="bi bi-check-lg"></i>
                 Salvar cliente
             </button>
 
+            <!-- // Botão que fecha o formulário sem salvar.
+                 // type="button" impede que ele envie o formulário. -->
             <button class="btn btn-secondary ms-2" type="button" @onclick="FecharFormulario">
                 Cancelar
             </button>
@@ -82,19 +125,28 @@
     </div>
 }
 
+<!-- // Só mostra esta mensagem se a variável mensagem possuir algum texto. -->
 @if (!string.IsNullOrEmpty(mensagem))
 {
+    <!-- // Alerta verde do Bootstrap mostrando confirmação de cadastro. -->
     <div class="alert alert-success">
         @mensagem
     </div>
 }
 
+<!-- // Card que contém a busca e a tabela de clientes. -->
 <div class="card p-4 shadow-sm">
+
+    <!-- // Campo de busca.
+         // Tudo que for digitado é salvo na variável busca através do @bind. -->
     <input class="form-control mb-3"
            placeholder="Buscar por nome, CPF ou e-mail..."
            @bind="busca" />
 
+    <!-- // Tabela Bootstrap usada para mostrar os clientes do banco. -->
     <table class="table">
+
+        <!-- // Cabeçalho da tabela. -->
         <thead>
             <tr>
                 <th>CLIENTE</th>
@@ -104,19 +156,29 @@
             </tr>
         </thead>
 
+        <!-- // Corpo da tabela. -->
         <tbody>
+
+            <!-- // Percorre a lista ClientesFiltrados.
+                 // Para cada cliente, cria uma nova linha na tabela. -->
             @foreach (var cliente in ClientesFiltrados)
             {
                 <tr>
+
+                    <!-- // Mostra o nome e o e-mail do cliente. -->
                     <td>
                         <strong>@cliente.Nome</strong>
                         <br />
                         <small class="text-secondary">@cliente.Email</small>
                     </td>
 
+                    <!-- // Mostra o telefone. -->
                     <td>@cliente.Telefone</td>
+
+                    <!-- // Mostra o modelo de carro que interessa ao cliente. -->
                     <td>@cliente.ModeloInteresse</td>
 
+                    <!-- // Mostra o status do atendimento. -->
                     <td>
                         <span class="status-badge">@cliente.StatusAtendimento</span>
                     </td>
@@ -127,74 +189,88 @@
 </div>
 
 @code {
-    // Lista buscada do banco.
+    // Lista que recebe todos os clientes buscados no banco de dados.
     private List<ClienteModel> clientes = new();
 
-    // Objeto usado pelo formulário.
+    // Objeto usado para guardar temporariamente os dados digitados no formulário.
+    // O status inicia como "novo".
     private ClienteModel novoCliente = new()
     {
         StatusAtendimento = "novo"
     };
 
-    // Controla se o formulário aparece.
+    // Controla se o formulário de cadastro aparece ou fica escondido.
     private bool mostrarFormulario = false;
 
-    // Mensagem verde após salvar.
+    // Guarda a mensagem de sucesso após cadastrar um cliente.
     private string mensagem = string.Empty;
 
-    // Texto usado na busca.
+    // Guarda o texto digitado no campo de busca.
     private string busca = string.Empty;
 
-    // Carrega os clientes assim que a página abre.
+    // Método executado automaticamente quando a página é aberta.
     protected override void OnInitialized()
     {
+        // Chama o método que busca os clientes no banco.
         CarregarClientes();
     }
 
-    // Busca clientes no banco pelo ClienteDAO.
+    // Busca os clientes usando o ClienteDAO.
     private void CarregarClientes()
     {
+        // Listar() executa um SELECT na tabela Clientes.
         clientes = ClienteDAO.Listar();
     }
 
-    // Abre formulário.
+    // Abre o formulário quando o botão "Novo cliente" é clicado.
     private void AbrirFormulario()
     {
+        // Limpa uma possível mensagem anterior.
         mensagem = string.Empty;
+
+        // Faz o formulário aparecer.
         mostrarFormulario = true;
     }
 
-    // Fecha formulário e limpa os dados preenchidos.
+    // Fecha o formulário sem cadastrar um cliente.
     private void FecharFormulario()
     {
+        // Esconde o formulário.
         mostrarFormulario = false;
 
+        // Cria um novo objeto vazio e limpa os campos preenchidos.
         novoCliente = new ClienteModel
         {
             StatusAtendimento = "novo"
         };
     }
 
-    // Salva o novo cliente.
+    // Salva o cliente no banco quando o formulário é enviado.
     private void SalvarCliente()
     {
-        // Insere no banco.
+        // Envia os dados preenchidos para o método Adicionar do ClienteDAO.
         ClienteDAO.Adicionar(novoCliente);
 
-        // Atualiza tabela.
+        // Busca novamente os clientes para atualizar a tabela na tela.
         CarregarClientes();
 
-        // Mostra confirmação.
+        // Define a mensagem de confirmação.
         mensagem = "Cliente cadastrado com sucesso.";
 
-        // Fecha formulário.
+        // Fecha o formulário e limpa os campos.
         FecharFormulario();
     }
 
-    // Filtra clientes conforme o texto da busca.
+    // Cria uma lista filtrada conforme o texto digitado na busca.
     private IEnumerable<ClienteModel> ClientesFiltrados =>
         clientes.Where(c =>
+
+            // Procura o texto no nome, sem diferenciar maiúsculas e minúsculas.
             c.Nome.Contains(busca, StringComparison.OrdinalIgnoreCase) ||
+
+            // Procura o texto no CPF.
             c.Cpf.Contains(busca, StringComparison.OrdinalIgnoreCase) ||
+
+            // Procura o texto no e-mail.
             c.Email.Contains(busca, StringComparison.OrdinalIgnoreCase));
 }

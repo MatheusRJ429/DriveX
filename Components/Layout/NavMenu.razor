@@ -1,5 +1,19 @@
+<!-- // Área reservada para a logo no topo do menu lateral.
+     // height define a altura da área.
+     // overflow: hidden impede que partes maiores da imagem apareçam fora dela.
+     // background é a cor de fundo atrás da logo. -->
 <div style="height: 145px; overflow: hidden; background: #020711;">
+
+    <!-- // Ao clicar na logo, o usuário volta para a página inicial. -->
     <a href="">
+
+        <!-- // Exibe a imagem da logo que está dentro de wwwroot/imagens.
+             // alt é o texto alternativo para acessibilidade.
+             // width: 100% faz a imagem ocupar toda a largura.
+             // height define a altura da logo.
+             // display: block remove pequenos espaços abaixo da imagem.
+             // object-fit: cover preenche a área, podendo recortar a imagem.
+             // object-position define qual parte da imagem ficará centralizada. -->
         <img src="imagens/DriveX.png"
              alt="Logo DriveX"
              style="
@@ -9,51 +23,74 @@
         object-fit: cover;
         object-position: center 62%;
         " />
+
     </a>
 </div>
 
+<!-- // Área que contém os links de navegação do menu lateral. -->
 <div class="nav-scrollable">
+
+    <!-- // nav é a área de navegação.
+         // flex-column, do Bootstrap, deixa os links organizados verticalmente. -->
     <nav class="nav flex-column">
+
+        <!-- // Link para a página inicial.
+             // px-3 adiciona espaço nas laterais.
+             // Match="NavLinkMatch.All" deixa este link ativo somente na rota inicial. -->
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <!-- // Ícone de casa do Bootstrap Icons. -->
                 <i class="bi bi-house-door-fill"></i> Início
             </NavLink>
         </div>
 
+        <!-- // Link para a página de veículos. -->
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="veiculos">
+                <!-- // Ícone de carro. -->
                 <i class="bi bi-car-front-fill"></i> Veículos
             </NavLink>
         </div>
 
+        <!-- // Link para a página de clientes. -->
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="clientes">
+                <!-- // Ícone de pessoas. -->
                 <i class="bi bi-people-fill"></i> Clientes
             </NavLink>
         </div>
 
+        <!-- // Link para a página de preços e financiamento. -->
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="precos">
+                <!-- // Ícone de dinheiro. -->
                 <i class="bi bi-cash-stack"></i> Preços
             </NavLink>
         </div>
 
+        <!-- // Link para a página de documentos dos clientes. -->
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="documentacao">
+                <!-- // Ícone de documento conferido. -->
                 <i class="bi bi-file-earmark-check-fill"></i> Documentação
             </NavLink>
         </div>
 
+        <!-- // Link para a página de chamados de suporte. -->
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="chamados">
+                <!-- // Ícone de headset. -->
                 <i class="bi bi-headset"></i> Chamados
             </NavLink>
         </div>
 
+        <!-- // Link para a página de vendas. -->
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="vendas">
+                <!-- // Ícone de recibo/venda. -->
                 <i class="bi bi-receipt-cutoff"></i> Vendas
             </NavLink>
         </div>
+
     </nav>
 </div>

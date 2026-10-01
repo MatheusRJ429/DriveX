@@ -1,6 +1,9 @@
 ﻿@page "/precos"
-@inject PrecoDAO PrecoDAO
 
+@using DriveX.DAO
+@using DriveX.Model
+
+@inject PrecoDAO PrecoDAO
 
 <PageTitle>Preços | DriveX</PageTitle>
 
@@ -31,6 +34,7 @@
                         <th>STATUS</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @foreach (var preco in precos)
                     {
@@ -40,7 +44,9 @@
                             <td>R$ @preco.Entrada.ToString("N2")</td>
                             <td>@preco.Parcelas</td>
                             <td>R$ @preco.IpvaEstimado.ToString("N2")</td>
-                            <td><span class="status-badge">@preco.Status</span></td>
+                            <td>
+                                <span class="status-badge">@preco.Status</span>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -50,17 +56,25 @@
 </div>
 
 @code {
+    // Lista que guarda os preços buscados na tabela Precos do banco de dados.
     private List<Preco> precos = [];
+
+    // Guarda uma mensagem caso ocorra erro ao carregar os preços.
     private string? mensagemErro;
 
+    // Método executado automaticamente quando a página é aberta.
     protected override void OnInitialized()
     {
         try
         {
+            // Chama o método Listar do PrecoDAO.
+            // Esse método faz um SELECT no banco e devolve a lista de preços.
             precos = PrecoDAO.Listar();
         }
         catch
         {
+            // Caso aconteça um erro de conexão ou consulta,
+            // a mensagem será exibida no alerta amarelo da página.
             mensagemErro = "Não foi possível carregar os preços.";
         }
     }

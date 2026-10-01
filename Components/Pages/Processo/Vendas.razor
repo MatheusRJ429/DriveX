@@ -1,4 +1,8 @@
 ﻿@page "/vendas"
+
+@using DriveX.DAO
+@using DriveX.Model
+
 @inject VendaDAO VendaDAO
 
 <PageTitle>Vendas | DriveX</PageTitle>
@@ -31,6 +35,7 @@
                         <th>STATUS</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @foreach (var venda in vendas)
                     {
@@ -41,7 +46,9 @@
                             <td>@venda.DataVenda.ToString("dd/MM/yyyy")</td>
                             <td>R$ @venda.ValorVenda.ToString("N2")</td>
                             <td>@venda.FormaPagamento</td>
-                            <td><span class="status-badge">@venda.StatusVenda</span></td>
+                            <td>
+                                <span class="status-badge">@venda.StatusVenda</span>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -51,17 +58,25 @@
 </div>
 
 @code {
+    // Lista que guarda todas as vendas buscadas no banco de dados.
     private List<Venda> vendas = [];
+
+    // Guarda uma mensagem para mostrar caso aconteça algum erro.
     private string? mensagemErro;
 
+    // Método executado automaticamente quando a página é aberta.
     protected override void OnInitialized()
     {
         try
         {
+            // Chama o método Listar do VendaDAO.
+            // Esse método faz uma consulta no banco e devolve as vendas cadastradas.
             vendas = VendaDAO.Listar();
         }
         catch
         {
+            // Caso aconteça um erro no banco ou na conexão,
+            // esta mensagem aparecerá no alerta amarelo da página.
             mensagemErro = "Não foi possível carregar as vendas.";
         }
     }

@@ -1,12 +1,8 @@
 @page "/veiculos"
 
-@* Importa o model Veiculo. *@
 @using DriveX.Model
-
-@* Permite usar o VeiculoDAO para buscar e cadastrar veículos. *@
 @using DriveX.DAO
 
-@* Injeta o DAO nesta página. *@
 @inject VeiculoDAO VeiculoDAO
 
 <PageTitle>Veículos - DriveX</PageTitle>
@@ -17,19 +13,16 @@
     <p>Consulte e cadastre os automóveis da frota.</p>
 </div>
 
-@* Botão que abre ou fecha o formulário. *@
 <button class="btn btn-primary mb-3" @onclick="AbrirFormulario">
     <i class="bi bi-plus-lg"></i>
     Novo veículo
 </button>
 
-@* O formulário só aparece quando mostrarFormulario for verdadeiro. *@
 @if (mostrarFormulario)
 {
     <div class="card p-4 mb-4 shadow-sm">
         <h4 class="mb-3">Cadastrar novo veículo</h4>
 
-        @* Quando enviar o formulário, chama o método SalvarVeiculo. *@
         <form @onsubmit="SalvarVeiculo" @onsubmit:preventDefault>
             <div class="row">
                 <div class="col-md-4 mb-3">
@@ -146,74 +139,87 @@
 </div>
 
 @code {
-    // Lista com os veículos buscados do banco.
+    // Lista que recebe todos os veículos buscados no banco de dados.
     private List<Veiculo> veiculos = new();
 
-    // Objeto usado pelo formulário de cadastro.
+    // Objeto que guarda os dados digitados no formulário de cadastro.
+    // O status inicial do novo veículo será "disponivel".
     private Veiculo novoVeiculo = new()
     {
         Status = "disponivel"
     };
 
-    // Controla se o formulário aparece ou não.
+    // Controla se o formulário de cadastro aparece ou fica escondido.
     private bool mostrarFormulario = false;
 
-    // Guarda a mensagem de sucesso.
+    // Guarda a mensagem de sucesso após cadastrar um veículo.
     private string mensagem = string.Empty;
 
-    // Texto digitado na busca.
+    // Guarda o texto digitado no campo de busca.
     private string busca = string.Empty;
 
-    // Executa assim que a página é aberta.
+    // Método executado automaticamente quando a página é aberta.
     protected override void OnInitialized()
     {
+        // Busca todos os veículos cadastrados no banco.
         CarregarVeiculos();
     }
 
-    // Busca os veículos no banco.
+    // Chama o VeiculoDAO para buscar os veículos no banco de dados.
     private void CarregarVeiculos()
     {
         veiculos = VeiculoDAO.Listar();
     }
 
-    // Abre o formulário.
+    // Abre o formulário quando o botão "Novo veículo" é clicado.
     private void AbrirFormulario()
     {
+        // Limpa uma possível mensagem anterior.
         mensagem = string.Empty;
+
+        // Faz o formulário aparecer.
         mostrarFormulario = true;
     }
 
-    // Fecha o formulário e limpa os campos.
+    // Fecha o formulário e limpa os campos preenchidos.
     private void FecharFormulario()
     {
+        // Esconde o formulário.
         mostrarFormulario = false;
 
+        // Cria um novo objeto vazio para limpar os campos.
         novoVeiculo = new Veiculo
         {
             Status = "disponivel"
         };
     }
 
-    // Salva o novo veículo no banco.
+    // Salva os dados do novo veículo no banco de dados.
     private void SalvarVeiculo()
     {
-        // Manda o objeto preenchido para o DAO.
+        // Envia o objeto preenchido para o método Adicionar do VeiculoDAO.
         VeiculoDAO.Adicionar(novoVeiculo);
 
-        // Atualiza a tabela sem precisar fechar o site.
+        // Busca novamente os veículos para atualizar a tabela da página.
         CarregarVeiculos();
 
-        // Exibe mensagem ao usuário.
+        // Define a mensagem de confirmação.
         mensagem = "Veículo cadastrado com sucesso.";
 
-        // Fecha e limpa o formulário.
+        // Fecha o formulário e limpa os campos.
         FecharFormulario();
     }
 
-    // Filtra a lista conforme a busca digitada.
+    // Cria uma lista filtrada conforme o texto digitado no campo de busca.
     private IEnumerable<Veiculo> VeiculosFiltrados =>
         veiculos.Where(v =>
+
+            // Procura o texto digitado na marca do veículo.
             v.Marca.Contains(busca, StringComparison.OrdinalIgnoreCase) ||
+
+            // Procura o texto digitado no modelo do veículo.
             v.Modelo.Contains(busca, StringComparison.OrdinalIgnoreCase) ||
+
+            // Procura o texto digitado na placa do veículo.
             v.Placa.Contains(busca, StringComparison.OrdinalIgnoreCase));
 }

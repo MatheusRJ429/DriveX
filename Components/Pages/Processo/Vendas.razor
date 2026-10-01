@@ -1,9 +1,9 @@
 ﻿@page "/vendas"
+
 @using DriveX.DAO
 @using DriveX.Model
 @using ClienteModel = DriveX.Model.Cliente
 
->>>>>>> 1dc76b9c1fd13bcf3d64fb841e52577f51cccb94
 @inject VendaDAO VendaDAO
 @inject ClienteDAO ClienteDAO
 @inject VeiculoDAO VeiculoDAO
@@ -128,6 +128,7 @@
                         <th>STATUS</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @foreach (var venda in vendas)
                     {
@@ -138,7 +139,9 @@
                             <td>@venda.DataVenda.ToString("dd/MM/yyyy")</td>
                             <td>R$ @venda.ValorVenda.ToString("N2")</td>
                             <td>@venda.FormaPagamento</td>
-                            <td><span class="status-badge">@venda.StatusVenda</span></td>
+                            <td>
+                                <span class="status-badge">@venda.StatusVenda</span>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -148,11 +151,6 @@
 </div>
 
 @code {
-<<<<<<< HEAD
-    private List<Venda> vendas = [];
-    private string? mensagemErro;
-
-=======
     // Lista que guarda as vendas cadastradas.
     private List<Venda> vendas = [];
 
@@ -185,24 +183,16 @@
     private string? mensagemSucesso;
 
     // Método executado automaticamente quando a página abre.
->>>>>>> 1dc76b9c1fd13bcf3d64fb841e52577f51cccb94
     protected override void OnInitialized()
     {
         try
         {
-<<<<<<< HEAD
-            vendas = VendaDAO.Listar();
-        }
-        catch
-        {
-=======
             // Carrega vendas, clientes e veículos disponíveis.
             CarregarDados();
         }
         catch
         {
             // Mostra mensagem caso ocorra erro no banco.
->>>>>>> 1dc76b9c1fd13bcf3d64fb841e52577f51cccb94
             mensagemErro = "Não foi possível carregar as vendas.";
         }
     }

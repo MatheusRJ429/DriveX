@@ -2,9 +2,11 @@
 
 @using DriveX.DAO
 @using DriveX.Model
+@using ClienteModel = DriveX.Model.Cliente
 
 @inject DocumentacaoCliDAO DocumentacaoCliDAO
 @inject DocumentoCarDAO DocumentoCarDAO
+@inject ClienteDAO ClienteDAO
 
 <PageTitle>Documentação | DriveX</PageTitle>
 
@@ -16,9 +18,90 @@
     </div>
 </div>
 
+<button class="btn btn-primary mt-3" @onclick="AbrirFormulario">
+    <i class="bi bi-plus-lg"></i>
+    Novo documento
+</button>
+
+@if (mostrarFormulario)
+{
+    <div class="card mt-4 shadow-sm border-0">
+        <div class="card-body p-4">
+            <h4 class="mb-3">Cadastrar documentação</h4>
+
+            <form @onsubmit="SalvarDocumentacao" @onsubmit:preventDefault>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label>Cliente</label>
+
+                        <select class="form-select" @bind="novaDocumentacao.IdCliente">
+                            <option value="0">Selecione um cliente</option>
+
+                            @foreach (var cliente in clientes)
+                            {
+                                <option value="@cliente.Id">@cliente.Nome</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>Documento</label>
+
+                        <select class="form-select" @bind="novaDocumentacao.IdDocumento">
+                            <option value="0">Selecione um documento</option>
+
+                            @foreach (var documento in documentos)
+                            {
+                                <option value="@documento.Id">@documento.NomeDocumento</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>Status da conferência</label>
+
+                        <select class="form-select" @bind="novaDocumentacao.Conferido">
+                            <option value="pendente">Pendente</option>
+                            <option value="sim">Conferido</option>
+                        </select>
+                    </div>
+
+                    @if (novaDocumentacao.Conferido == "sim")
+                    {
+                        <div class="col-md-6 mb-3">
+                            <label>Data da conferência</label>
+
+                            <input type="date"
+                                   class="form-control"
+                                   @bind="novaDocumentacao.DataConferencia"
+                                   @bind:format="yyyy-MM-dd" />
+                        </div>
+                    }
+                </div>
+
+                <button class="btn btn-success" type="submit">
+                    <i class="bi bi-check-lg"></i>
+                    Salvar documento
+                </button>
+
+                <button class="btn btn-secondary ms-2"
+                        type="button"
+                        @onclick="FecharFormulario">
+                    Cancelar
+                </button>
+            </form>
+        </div>
+    </div>
+}
+
 @if (!string.IsNullOrEmpty(mensagemErro))
 {
     <div class="alert alert-warning mt-4">@mensagemErro</div>
+}
+
+@if (!string.IsNullOrEmpty(mensagemSucesso))
+{
+    <div class="alert alert-success mt-4">@mensagemSucesso</div>
 }
 
 <div class="card mt-4 shadow-sm border-0">
@@ -44,7 +127,7 @@
                                 <span class="status-badge">@documento.Conferido</span>
                             </td>
                             <td>
-                                @(documento.DataConferencia?.ToString("dd/MM/yyyy HH:mm") ?? "Pendente")
+                                @(documento.DataConferencia?.ToString("dd/MM/yyyy") ?? "Pendente")
                             </td>
                         </tr>
                     }
@@ -55,40 +138,132 @@
 </div>
 
 @code {
-    // Lista que guarda os registros de documentação dos clientes.
+    // Lista que guarda os registros de documentação.
     private List<DocumentacaoCli> documentacoes = [];
 
-    // Lista que guarda os tipos de documentos existentes no banco.
+    // Lista de clientes usada no campo de seleção.
+    private List<ClienteModel> clientes = [];
+
+    // Lista de tipos de documentos usada no campo de seleção.
     private List<DocumentoCar> documentos = [];
 
-    // Guarda uma mensagem caso aconteça algum erro ao buscar dados.
+    // Objeto que recebe os dados digitados no formulário.
+    private DocumentacaoCli novaDocumentacao = new()
+    {
+        // Todo novo documento começa como pendente.
+        Conferido = "pendente"
+    };
+
+    // Controla se o formulário aparece.
+    private bool mostrarFormulario;
+
+    // Guarda mensagens de erro.
     private string? mensagemErro;
 
-    // Procura o nome de um documento usando o seu ID.
-    private string NomeDocumento(int idDocumento)
-    {
-        // FirstOrDefault procura o primeiro documento com o mesmo ID.
-        // ?. impede erro caso o documento não seja encontrado.
-        // ?? mostra um texto padrão se não encontrar o documento.
-        return documentos.FirstOrDefault(d => d.Id == idDocumento)?.NomeDocumento
-            ?? $"Documento #{idDocumento}";
-    }
+    // Guarda mensagens de sucesso.
+    private string? mensagemSucesso;
 
-    // Este método roda automaticamente quando a página é aberta.
+    // Método executado automaticamente quando a página é aberta.
     protected override void OnInitialized()
     {
         try
         {
-            // Busca no banco todos os documentos ligados aos clientes.
-            documentacoes = DocumentacaoCliDAO.Listar();
-
-            // Busca no banco os tipos de documentos cadastrados.
-            documentos = DocumentoCarDAO.Listar();
+            // Busca documentos, clientes e tipos de documentos.
+            CarregarDados();
         }
         catch
         {
-            // Se der algum erro no banco, salva uma mensagem para aparecer na tela.
+            // Mostra uma mensagem se der erro ao carregar os dados.
             mensagemErro = "Não foi possível carregar a documentação.";
+        }
+    }
+
+    // Busca os dados necessários para a página.
+    private void CarregarDados()
+    {
+        // Busca os documentos já cadastrados.
+        documentacoes = DocumentacaoCliDAO.Listar();
+
+        // Busca os clientes para o formulário.
+        clientes = ClienteDAO.Listar();
+
+        // Busca os tipos de documentos para o formulário.
+        documentos = DocumentoCarDAO.Listar();
+    }
+
+    // Abre o formulário de cadastro.
+    private void AbrirFormulario()
+    {
+        // Limpa mensagens anteriores.
+        mensagemErro = null;
+        mensagemSucesso = null;
+
+        // Mostra o formulário.
+        mostrarFormulario = true;
+    }
+
+    // Fecha o formulário e limpa os dados preenchidos.
+    private void FecharFormulario()
+    {
+        // Esconde o formulário.
+        mostrarFormulario = false;
+
+        // Cria um novo objeto vazio.
+        novaDocumentacao = new DocumentacaoCli
+        {
+            Conferido = "pendente"
+        };
+    }
+
+    // Salva a documentação no banco.
+    private void SalvarDocumentacao()
+    {
+        // Verifica se um cliente foi selecionado.
+        if (novaDocumentacao.IdCliente == 0)
+        {
+            mensagemErro = "Selecione um cliente.";
+            return;
+        }
+
+        // Verifica se um documento foi selecionado.
+        if (novaDocumentacao.IdDocumento == 0)
+        {
+            mensagemErro = "Selecione um documento.";
+            return;
+        }
+
+        // Se o documento não foi conferido, remove a data.
+        if (novaDocumentacao.Conferido != "sim")
+        {
+            novaDocumentacao.DataConferencia = null;
+        }
+
+        // Se estiver conferido, exige uma data.
+        if (novaDocumentacao.Conferido == "sim" &&
+            novaDocumentacao.DataConferencia == null)
+        {
+            mensagemErro = "Informe a data da conferência.";
+            return;
+        }
+
+        try
+        {
+            // Salva o novo documento no banco.
+            DocumentacaoCliDAO.Adicionar(novaDocumentacao);
+
+            // Atualiza a tabela exibida na página.
+            CarregarDados();
+
+            // Mostra mensagem de sucesso.
+            mensagemSucesso = "Documentação cadastrada com sucesso.";
+
+            // Fecha e limpa o formulário.
+            FecharFormulario();
+        }
+        catch
+        {
+            // Mostra mensagem caso ocorra erro ao salvar.
+            mensagemErro = "Não foi possível cadastrar a documentação.";
         }
     }
 }

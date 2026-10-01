@@ -1,9 +1,8 @@
 ﻿@page "/vendas"
 
-@page "/vendas"
-
 @using DriveX.DAO
 @using DriveX.Model
+@using ClienteModel = DriveX.Model.Cliente
 
 @inject VendaDAO VendaDAO
 @inject ClienteDAO ClienteDAO
@@ -156,7 +155,7 @@
     private List<Venda> vendas = [];
 
     // Lista de clientes usada no campo de seleção do formulário.
-    private List<Cliente> clientes = [];
+    private List<ClienteModel> clientes = [];
 
     // Lista de carros que ainda podem ser vendidos.
     private List<Veiculo> veiculosDisponiveis = [];

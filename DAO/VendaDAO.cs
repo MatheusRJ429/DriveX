@@ -1,4 +1,5 @@
-﻿// Importa a classe Conexao, responsável por abrir a conexão com o MySQL.
+﻿
+// Importa a classe Conexao, responsável por abrir a conexão com o MySQL.
 using DriveX.Configs;
 
 // Importa a classe Venda, que representa os dados de uma venda.

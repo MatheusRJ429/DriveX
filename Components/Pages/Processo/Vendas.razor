@@ -1,5 +1,15 @@
 ﻿@page "/vendas"
+<<<<<<< HEAD
+=======
+
+@using DriveX.DAO
+@using DriveX.Model
+@using ClienteModel = DriveX.Model.Cliente
+
+>>>>>>> 1dc76b9c1fd13bcf3d64fb841e52577f51cccb94
 @inject VendaDAO VendaDAO
+@inject ClienteDAO ClienteDAO
+@inject VeiculoDAO VeiculoDAO
 
 <PageTitle>Vendas | DriveX</PageTitle>
 
@@ -11,9 +21,99 @@
     </div>
 </div>
 
+<button class="btn btn-primary mt-3" @onclick="AbrirFormulario">
+    <i class="bi bi-plus-lg"></i>
+    Registrar venda
+</button>
+
+@if (mostrarFormulario)
+{
+    <div class="card mt-4 shadow-sm border-0">
+        <div class="card-body p-4">
+            <h4 class="mb-3">Cadastrar nova venda</h4>
+
+            <form @onsubmit="SalvarVenda" @onsubmit:preventDefault>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label>Cliente</label>
+
+                        <select class="form-select" @bind="novaVenda.IdCliente" required>
+                            <option value="0">Selecione um cliente</option>
+
+                            @foreach (var cliente in clientes)
+                            {
+                                <option value="@cliente.Id">@cliente.Nome</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>Veículo disponível</label>
+
+                        <select class="form-select" @bind="novaVenda.IdCarro" required>
+                            <option value="0">Selecione um veículo</option>
+
+                            @foreach (var veiculo in veiculosDisponiveis)
+                            {
+                                <option value="@veiculo.Id">
+                                    @veiculo.Marca @veiculo.Modelo - @veiculo.Placa
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label>Data da venda</label>
+                        <input type="date"
+                               class="form-control"
+                               @bind="novaVenda.DataVenda"
+                               @bind:format="yyyy-MM-dd"
+                               required />
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label>Valor da venda</label>
+                        <input type="number"
+                               step="0.01"
+                               class="form-control"
+                               @bind="novaVenda.ValorVenda"
+                               required />
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label>Forma de pagamento</label>
+
+                        <select class="form-select" @bind="novaVenda.FormaPagamento">
+                            <option value="a vista">À vista</option>
+                            <option value="financiamento">Financiamento</option>
+                            <option value="pix">PIX</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn btn-success" type="submit">
+                    <i class="bi bi-check-lg"></i>
+                    Salvar venda
+                </button>
+
+                <button class="btn btn-secondary ms-2"
+                        type="button"
+                        @onclick="FecharFormulario">
+                    Cancelar
+                </button>
+            </form>
+        </div>
+    </div>
+}
+
 @if (!string.IsNullOrEmpty(mensagemErro))
 {
     <div class="alert alert-warning mt-4">@mensagemErro</div>
+}
+
+@if (!string.IsNullOrEmpty(mensagemSucesso))
+{
+    <div class="alert alert-success mt-4">@mensagemSucesso</div>
 }
 
 <div class="card mt-4 shadow-sm border-0">
@@ -51,18 +151,141 @@
 </div>
 
 @code {
+<<<<<<< HEAD
     private List<Venda> vendas = [];
     private string? mensagemErro;
 
+=======
+    // Lista que guarda as vendas cadastradas.
+    private List<Venda> vendas = [];
+
+    // Lista de clientes usada no campo de seleção do formulário.
+    private List<ClienteModel> clientes = [];
+
+    // Lista de carros que ainda podem ser vendidos.
+    private List<Veiculo> veiculosDisponiveis = [];
+
+    // Objeto que guarda os dados digitados no formulário.
+    private Venda novaVenda = new()
+    {
+        // Define a data inicial como a data atual.
+        DataVenda = DateOnly.FromDateTime(DateTime.Today),
+
+        // Define a forma de pagamento inicial.
+        FormaPagamento = "a vista",
+
+        // Toda nova venda será cadastrada como concluída.
+        StatusVenda = "concluida"
+    };
+
+    // Controla se o formulário aparece ou fica escondido.
+    private bool mostrarFormulario;
+
+    // Guarda mensagens de erro.
+    private string? mensagemErro;
+
+    // Guarda mensagens de sucesso.
+    private string? mensagemSucesso;
+
+    // Método executado automaticamente quando a página abre.
+>>>>>>> 1dc76b9c1fd13bcf3d64fb841e52577f51cccb94
     protected override void OnInitialized()
     {
         try
         {
+<<<<<<< HEAD
             vendas = VendaDAO.Listar();
         }
         catch
         {
+=======
+            // Carrega vendas, clientes e veículos disponíveis.
+            CarregarDados();
+        }
+        catch
+        {
+            // Mostra mensagem caso ocorra erro no banco.
+>>>>>>> 1dc76b9c1fd13bcf3d64fb841e52577f51cccb94
             mensagemErro = "Não foi possível carregar as vendas.";
+        }
+    }
+
+    // Busca todos os dados necessários para a página.
+    private void CarregarDados()
+    {
+        // Busca as vendas cadastradas.
+        vendas = VendaDAO.Listar();
+
+        // Busca os clientes para o campo de seleção.
+        clientes = ClienteDAO.Listar();
+
+        // Busca apenas os veículos com status disponivel.
+        veiculosDisponiveis = VeiculoDAO.Listar()
+            .Where(v => v.Status.Equals("disponivel", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    // Abre o formulário de cadastro.
+    private void AbrirFormulario()
+    {
+        // Limpa mensagens antigas.
+        mensagemErro = null;
+        mensagemSucesso = null;
+
+        // Mostra o formulário.
+        mostrarFormulario = true;
+    }
+
+    // Fecha o formulário e limpa os campos.
+    private void FecharFormulario()
+    {
+        // Esconde o formulário.
+        mostrarFormulario = false;
+
+        // Cria uma nova venda vazia.
+        novaVenda = new Venda
+        {
+            DataVenda = DateOnly.FromDateTime(DateTime.Today),
+            FormaPagamento = "a vista",
+            StatusVenda = "concluida"
+        };
+    }
+
+    // Salva a venda quando o formulário é enviado.
+    private void SalvarVenda()
+    {
+        // Verifica se um cliente foi selecionado.
+        if (novaVenda.IdCliente == 0)
+        {
+            mensagemErro = "Selecione um cliente.";
+            return;
+        }
+
+        // Verifica se um veículo foi selecionado.
+        if (novaVenda.IdCarro == 0)
+        {
+            mensagemErro = "Selecione um veículo.";
+            return;
+        }
+
+        try
+        {
+            // Insere a nova venda no banco.
+            VendaDAO.Adicionar(novaVenda);
+
+            // Atualiza vendas e veículos disponíveis na tela.
+            CarregarDados();
+
+            // Mostra mensagem de confirmação.
+            mensagemSucesso = "Venda cadastrada com sucesso.";
+
+            // Fecha o formulário.
+            FecharFormulario();
+        }
+        catch
+        {
+            // Mostra mensagem caso ocorra erro ao salvar.
+            mensagemErro = "Não foi possível cadastrar a venda.";
         }
     }
 }

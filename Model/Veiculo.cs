@@ -1,7 +1,5 @@
 namespace DriveX.Model
 {
-    // Essa classe representa um veículo dentro do sistema.
-    // Cada propriedade corresponde a uma informação da tabela Carros.
     public class Veiculo
     {
         // ID único do carro no banco.

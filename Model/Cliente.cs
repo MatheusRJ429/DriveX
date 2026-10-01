@@ -1,30 +1,32 @@
-﻿namespace DriveX.Model
+﻿
+namespace DriveX.Model
 {
-    // Representa um cliente da tabela Clientes.
     public class Cliente
     {
-        // ID único do cliente.
+        // Armazena o ID único do cliente.
         public int Id { get; set; }
 
-        // Nome completo.
+        // Armazena o nome completo do cliente.
+        // string.Empty define um valor inicial vazio.
         public string Nome { get; set; } = string.Empty;
 
-        // CPF do cliente.
+        // Armazena o CPF do cliente.
         public string Cpf { get; set; } = string.Empty;
 
-        // Telefone para contato.
+        // Armazena o telefone do cliente.
         public string Telefone { get; set; } = string.Empty;
 
-        // E-mail do cliente.
+        // Armazena o e-mail do cliente.
         public string Email { get; set; } = string.Empty;
 
-        // Carro que o cliente demonstrou interesse.
+        // Armazena o modelo do carro que o cliente demonstrou interesse.
         public string ModeloInteresse { get; set; } = string.Empty;
 
-        // Status do atendimento: novo, em atendimento, concluido etc.
+        // Armazena o status atual do atendimento.
+        // Exemplos: "Novo", "Em atendimento" ou "Concluído".
         public string StatusAtendimento { get; set; } = string.Empty;
 
-        // Observações sobre o cliente.
+        // Armazena observações ou informações adicionais sobre o cliente.
         public string Observacao { get; set; } = string.Empty;
     }
 }
